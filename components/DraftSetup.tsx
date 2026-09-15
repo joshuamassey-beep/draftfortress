@@ -29,7 +29,6 @@ export function DraftSetup() {
   function onTeamCount(next: number) {
     setTeamCount(next);
     setUserSlot((slot) => Math.min(slot, next));
-    setRounds((current) => clampRounds(current, next, poolSize));
   }
 
   function onSubmit(event: FormEvent) {

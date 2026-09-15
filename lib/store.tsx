@@ -9,7 +9,14 @@ import {
   useState,
   type ReactNode,
 } from "react";
-import { draftComplete, makePick, rosterPlayerIds, teamIndexOnTheClock } from "@/lib/draft";
+import {
+  clampRounds,
+  clampTeamCount,
+  draftComplete,
+  makePick,
+  rosterPlayerIds,
+  teamIndexOnTheClock,
+} from "@/lib/draft";
 import { PLAYERS } from "@/lib/players";
 import { chooseCpuPlayer } from "@/lib/recommend";
 import {
@@ -97,9 +104,15 @@ export function DraftProvider({ children }: { children: ReactNode }) {
   }, [state, hydrated]);
 
   const startDraft = useCallback((partial: Omit<DraftSettings, "teamNames">) => {
+    const teamCount = clampTeamCount(partial.teamCount);
+    const rounds = clampRounds(partial.rounds, teamCount, PLAYERS.length);
+    const userSlot = Math.min(Math.max(1, partial.userSlot), teamCount);
     const settings: DraftSettings = {
-      ...partial,
-      teamNames: defaultTeamNames(partial.teamCount, partial.userSlot, partial.userTeamName),
+      teamCount,
+      rounds,
+      userSlot,
+      userTeamName: partial.userTeamName,
+      teamNames: defaultTeamNames(teamCount, userSlot, partial.userTeamName),
     };
     setState({
       settings,
@@ -165,7 +178,7 @@ export function DraftProvider({ children }: { children: ReactNode }) {
       return;
     }
 
-    const delay = state.simFast ? 28 : 420;
+    const delay = state.simFast ? 28 : state.settings.teamCount >= 16 ? 160 : 420;
     const timer = window.setTimeout(() => {
       const settings = state.settings;
       if (!settings) return;
@@ -181,7 +194,11 @@ export function DraftProvider({ children }: { children: ReactNode }) {
         rounds: settings.rounds,
         entropy: 0.42,
       });
-      if (id) pickPlayer(id);
+      if (id) {
+        pickPlayer(id);
+        return;
+      }
+      setState((prev) => ({ ...prev, status: prev.picks.length ? "complete" : prev.status, simFast: false }));
     }, delay);
     return () => window.clearTimeout(timer);
   }, [hydrated, state, pickPlayer, setSimFast]);

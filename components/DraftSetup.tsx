@@ -1,8 +1,18 @@
 "use client";
 
 import type { FormEvent } from "react";
-import { useState } from "react";
+import { useMemo, useState } from "react";
+import {
+  clampRounds,
+  MAX_TEAMS,
+  maxRoundsForLeague,
+  MIN_TEAMS,
+  minRoundsForLeague,
+} from "@/lib/draft";
+import { PLAYERS } from "@/lib/players";
 import { useDraft } from "@/lib/store";
+
+const TEAM_OPTIONS = Array.from({ length: MAX_TEAMS - MIN_TEAMS + 1 }, (_, i) => MIN_TEAMS + i);
 
 export function DraftSetup() {
   const { startDraft } = useDraft();
@@ -11,9 +21,20 @@ export function DraftSetup() {
   const [userSlot, setUserSlot] = useState(1);
   const [userTeamName, setUserTeamName] = useState("Your Fortress");
 
+  const poolSize = PLAYERS.length;
+  const maxRounds = useMemo(() => maxRoundsForLeague(teamCount, poolSize), [teamCount, poolSize]);
+  const minRounds = useMemo(() => minRoundsForLeague(teamCount, poolSize), [teamCount, poolSize]);
+  const safeRounds = clampRounds(rounds, teamCount, poolSize);
+
+  function onTeamCount(next: number) {
+    setTeamCount(next);
+    setUserSlot((slot) => Math.min(slot, next));
+    setRounds((current) => clampRounds(current, next, poolSize));
+  }
+
   function onSubmit(event: FormEvent) {
     event.preventDefault();
-    startDraft({ teamCount, rounds, userSlot, userTeamName });
+    startDraft({ teamCount, rounds: safeRounds, userSlot, userTeamName });
   }
 
   return (
@@ -28,21 +49,18 @@ export function DraftSetup() {
         Snake draft setup
       </h1>
       <p className="mt-3 text-fortress-steel">
-        Configure the board, take your seat, and keep every pick inside the walls.
+        Configure the board, take your seat, and keep every pick inside the walls. Leagues from{" "}
+        {MIN_TEAMS} to {MAX_TEAMS} teams.
       </p>
 
       <label className="mt-8 block text-xs font-semibold uppercase tracking-widest text-fortress-muted">
         League size
         <select
           value={teamCount}
-          onChange={(event) => {
-            const next = Number(event.target.value);
-            setTeamCount(next);
-            setUserSlot((slot) => Math.min(slot, next));
-          }}
+          onChange={(event) => onTeamCount(Number(event.target.value))}
           className="mt-2 w-full border border-fortress-border bg-fortress-bg px-3 py-2 text-base text-fortress-ink"
         >
-          {[8, 9, 10, 11, 12, 13, 14].map((n) => (
+          {TEAM_OPTIONS.map((n) => (
             <option key={n} value={n}>
               {n} teams
             </option>
@@ -54,14 +72,21 @@ export function DraftSetup() {
         Rounds
         <input
           type="range"
-          min={12}
-          max={16}
-          value={rounds}
+          min={minRounds}
+          max={maxRounds}
+          value={safeRounds}
           onChange={(event) => setRounds(Number(event.target.value))}
           className="mt-3 w-full accent-fortress-gold"
         />
         <span className="mt-1 block font-mono text-sm text-fortress-ink">
-          {rounds} rounds{rounds >= 15 ? " · full roster including K/DST" : " · 15 recommended to fill K/DST"}
+          {safeRounds} rounds · {teamCount * safeRounds} total picks
+        </span>
+        <span className="mt-1 block text-sm font-normal normal-case tracking-normal text-fortress-steel">
+          {maxRounds < 16
+            ? `Player pool (${poolSize}) caps a ${teamCount}-team board at ${maxRounds} rounds so every seat can pick.`
+            : safeRounds >= 15
+              ? "Full roster including K/DST."
+              : "15 rounds recommended to fill K/DST."}
         </span>
       </label>
 

@@ -6,7 +6,7 @@ const PILLARS = [
     href: "/draft",
     kicker: "Draft room",
     title: "Own the snake",
-    copy: "8–14 team board, full player pool, and a need-based recon that names the next three bricks in the wall.",
+    copy: "4–32 team snake board, full player pool, and a need-based recon that names the next three bricks in the wall.",
   },
   {
     href: "/team",

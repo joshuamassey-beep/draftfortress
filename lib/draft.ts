@@ -1,5 +1,29 @@
 import type { DraftPick, DraftSettings } from "@/lib/types";
 
+export const MIN_TEAMS = 4;
+export const MAX_TEAMS = 32;
+export const MIN_ROUNDS = 8;
+export const MAX_ROUNDS = 16;
+
+export function clampTeamCount(teamCount: number): number {
+  return Math.min(MAX_TEAMS, Math.max(MIN_TEAMS, Math.round(teamCount)));
+}
+
+export function maxRoundsForLeague(teamCount: number, playerCount: number): number {
+  const byPool = Math.floor(playerCount / Math.max(1, teamCount));
+  return Math.max(1, Math.min(MAX_ROUNDS, byPool));
+}
+
+export function minRoundsForLeague(teamCount: number, playerCount: number): number {
+  return Math.min(MIN_ROUNDS, maxRoundsForLeague(teamCount, playerCount));
+}
+
+export function clampRounds(rounds: number, teamCount: number, playerCount: number): number {
+  const max = maxRoundsForLeague(teamCount, playerCount);
+  const min = minRoundsForLeague(teamCount, playerCount);
+  return Math.min(max, Math.max(min, Math.round(rounds)));
+}
+
 export function totalPicks(settings: DraftSettings): number {
   return settings.teamCount * settings.rounds;
 }

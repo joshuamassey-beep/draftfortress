@@ -76,6 +76,23 @@ export const FORTRESS_NAMES = [
   "Bulwark",
   "Portcullis",
   "Barbican",
+  "Moat",
+  "Turret",
+  "Gatehouse",
+  "Arrowslit",
+  "Machicolation",
+  "Bailey",
+  "Donjon",
+  "Curtain",
+  "Embrasure",
+  "Sallyport",
+  "Postern",
+  "Bartizan",
+  "Ravelin",
+  "Hornwork",
+  "Counterscarp",
+  "Glacis",
+  "Parapet",
 ];
 
 export function defaultTeamNames(teamCount: number, userSlot: number, userTeamName: string) {
@@ -85,7 +102,9 @@ export function defaultTeamNames(teamCount: number, userSlot: number, userTeamNa
     if (i === userSlot - 1) {
       names.push(userTeamName.trim() || "Your Fortress");
     } else {
-      names.push(FORTRESS_NAMES[fortressIndex % FORTRESS_NAMES.length]);
+      const base = FORTRESS_NAMES[fortressIndex % FORTRESS_NAMES.length];
+      const wave = Math.floor(fortressIndex / FORTRESS_NAMES.length);
+      names.push(wave === 0 ? base : `${base} ${wave + 1}`);
       fortressIndex += 1;
     }
   }

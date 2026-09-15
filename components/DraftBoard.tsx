@@ -34,7 +34,7 @@ export function DraftBoard({
                     index === settings.userSlot - 1 ? "text-fortress-gold" : "text-fortress-steel"
                   }`}
                 >
-                  <span className="block max-w-[7.5rem] truncate">{name}</span>
+                  <span className="block max-w-[6.5rem] truncate sm:max-w-[7.5rem]">{name}</span>
                 </th>
               ))}
             </tr>
@@ -59,7 +59,9 @@ export function DraftBoard({
                     return (
                       <td
                         key={`${round}-${teamIndex}`}
-                        className={`min-w-[8.5rem] px-2 py-1.5 ${
+                        className={`px-2 py-1.5 ${
+                          settings.teamCount >= 16 ? "min-w-[6.25rem]" : "min-w-[8.5rem]"
+                        } ${
                           onClock ? "bg-fortress-gold/15 ring-1 ring-inset ring-fortress-gold" : ""
                         } ${userCell && !onClock ? "bg-white/[0.02]" : ""}`}
                       >

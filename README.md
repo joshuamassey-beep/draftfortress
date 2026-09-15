@@ -22,7 +22,7 @@ npm start
 
 ## What you can do
 
-1. **Draft room** — Configure an 8–14 team snake draft, take a seat, and pick from a ~300 player NFL pool (QB / RB / WR / TE / K / DST) with search and filters. CPU teams auto-draft. When you are on the clock, the recommender surfaces **top 3 targets** with short reasons based on roster holes, positional scarcity, and ADP value.
+1. **Draft room** — Configure a 4–32 team snake draft, take a seat, and pick from a ~300 player NFL pool (QB / RB / WR / TE / K / DST) with search and filters. CPU teams auto-draft. When you are on the clock, the recommender surfaces **top 3 targets** with short reasons based on roster holes, positional scarcity, and ADP value. Round count is capped so `teams × rounds` never exceeds the player pool.
 2. **My Team** — Roster by slot plus a week-by-week start/sit advisor (projections, bye weeks, starter eligibility).
 3. **Waivers** — Remaining players after (or during) the draft, pickup suggestions, and claim/drop.
 

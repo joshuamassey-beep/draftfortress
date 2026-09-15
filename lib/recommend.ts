@@ -21,14 +21,24 @@ function remainingAt(available: Player[], position: Position, maxPosRank: number
 function needWeight(roster: Player[], player: Player, round: number, rounds: number): number {
   const counts = countPositions(roster);
   const holes = starterHoles(roster);
-  const late = round >= rounds - 1;
-  const veryLate = round >= rounds;
+  const roundsLeft = rounds - round + 1;
+  const missingSpecialists = (counts.K === 0 ? 1 : 0) + (counts.DST === 0 ? 1 : 0);
+  const specialistWindow = missingSpecialists > 0 && roundsLeft <= Math.max(2, missingSpecialists);
+
+  if (specialistWindow) {
+    if (LATE_POS.includes(player.position) && counts[player.position] === 0) return 520;
+    if (!LATE_POS.includes(player.position)) {
+      return roundsLeft <= missingSpecialists ? -240 : -90;
+    }
+  }
 
   if (LATE_POS.includes(player.position)) {
-    if (!late) return -90;
+    if (roundsLeft > 2) return -90;
     if (counts[player.position] === 0) return 70;
     return -40;
   }
+
+  const veryLate = roundsLeft <= 1;
 
   if (holes.includes(player.position)) return 78;
   if (FLEX_ELIGIBLE.includes(player.position)) {

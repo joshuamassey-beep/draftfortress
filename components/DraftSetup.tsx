@@ -60,7 +60,9 @@ export function DraftSetup() {
           onChange={(event) => setRounds(Number(event.target.value))}
           className="mt-3 w-full accent-fortress-gold"
         />
-        <span className="mt-1 block font-mono text-sm text-fortress-ink">{rounds} rounds</span>
+        <span className="mt-1 block font-mono text-sm text-fortress-ink">
+          {rounds} rounds{rounds >= 15 ? " · full roster including K/DST" : " · 15 recommended to fill K/DST"}
+        </span>
       </label>
 
       <label className="mt-5 block text-xs font-semibold uppercase tracking-widest text-fortress-muted">

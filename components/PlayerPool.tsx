@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { positionColor } from "@/lib/players";
 import type { Player, Position } from "@/lib/types";
 import { POSITIONS } from "@/lib/types";
@@ -20,19 +20,26 @@ export function PlayerPool({
 }) {
   const [query, setQuery] = useState("");
   const [filter, setFilter] = useState<(typeof FILTERS)[number]>("ALL");
+  const listRef = useRef<HTMLUListElement>(null);
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
-    return players.filter((player) => {
-      if (filter !== "ALL" && player.position !== filter) return false;
-      if (!q) return true;
-      return (
-        player.name.toLowerCase().includes(q) ||
-        player.team.toLowerCase().includes(q) ||
-        player.position.toLowerCase() === q
-      );
-    });
+    return players
+      .filter((player) => {
+        if (filter !== "ALL" && player.position !== filter) return false;
+        if (!q) return true;
+        return (
+          player.name.toLowerCase().includes(q) ||
+          player.team.toLowerCase().includes(q) ||
+          player.position.toLowerCase() === q
+        );
+      })
+      .sort((a, b) => a.rank - b.rank);
   }, [players, query, filter]);
+
+  useEffect(() => {
+    listRef.current?.scrollTo({ top: 0 });
+  }, [filter, query]);
 
   return (
     <section className="flex min-h-0 flex-col border border-fortress-border bg-fortress-surface">
@@ -64,7 +71,7 @@ export function PlayerPool({
           ))}
         </div>
       </div>
-      <ul className="max-h-[520px] overflow-auto">
+      <ul ref={listRef} className="max-h-[520px] overflow-auto">
         {filtered.map((player) => {
           const hot = highlightIds?.includes(player.id);
           return (

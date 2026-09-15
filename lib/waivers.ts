@@ -27,10 +27,10 @@ export function waiverSuggestions(options: {
       if (player.byeWeek === week) score -= 18;
 
       if (player.position === "K" && counts.K === 0) {
-        score += 55;
+        score += 220;
         reasons.push("You have no kicker. Claim one before the wire dries up.");
       } else if (player.position === "DST" && counts.DST === 0) {
-        score += 55;
+        score += 220;
         reasons.push("Streaming a defense keeps the fortress from leaking points.");
       } else if (counts[player.position] === 0) {
         score += 48;

@@ -1,0 +1,41 @@
+@import url("https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700&family=Oswald:wght@500;600;700&display=swap");
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: dark;
+}
+
+html,
+body {
+  background: #090b0f;
+  color: #eef1f6;
+}
+
+body {
+  @apply font-body antialiased;
+  background-image:
+    linear-gradient(180deg, rgba(18, 22, 30, 0.4) 0%, rgba(9, 11, 15, 1) 280px),
+    radial-gradient(1200px 500px at 50% -10%, rgba(201, 162, 39, 0.08), transparent 55%);
+  min-height: 100%;
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #2b3547;
+}
+
+::-webkit-scrollbar-track {
+  background: #11151c;
+}
+
+::selection {
+  background: #c9a227;
+  color: #090b0f;
+}
